@@ -1,0 +1,23 @@
+About MindStrong
+
+Introduction
+
+MindStrong is a mental health and lifestyle dashboard presented in the form of a mobile application. MindStrong takes user provided data from manual journal entries, sleep logs, diet logs, and exercise logs. With optional user consent, MindStrong also fetches data over an API with FitBit and Oura. 
+
+The objective of the MindStrong mobile application is to provide users with comprehensive mental health information in the form of data summaries, graphs, and charts. The data visualizations that MindStrong displays are intended to highlight the correlations between a user’s lifestyle and their mood/affect. Consequently, users are able to pinpoint habits and choices that impact their overall mood.  
+
+MindStrong aims to provide a tailored analysis of the relationship between a user’s lifestyle and their emotional/mental health. MindStrong gathers data over a 21-day period, and generates a current analysis. A new analysis is generated every 21 days, and previous analyses are always available for the user to reference.
+
+It’s important to note that MindStrong will have margins of error. A proper analysis depends on accurate data. As the bulk of data ingested is subjective (entries provided by the user), MindStrong’s analysis should not be used in lieu of medical advice. For smaller margins of error, MindStrong invites users to grant access to their FitBit and/or Oura devices over API. 
+
+
+
+
+
+
+
+
+
+
+
+
