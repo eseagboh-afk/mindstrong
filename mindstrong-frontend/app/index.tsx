@@ -26,6 +26,12 @@ export default function Index() {
           <Text style={styles.link}>How it Works</Text>
         </TouchableOpacity>
         </Link>
+
+         <Link href="/dailylog" asChild>
+        <TouchableOpacity>
+          <Text style={styles.link}>Testing Daily Log</Text>
+        </TouchableOpacity>
+        </Link>
         </View>
     </View>
   );
