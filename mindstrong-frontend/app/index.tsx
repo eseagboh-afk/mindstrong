@@ -27,7 +27,7 @@ export default function Index() {
         </TouchableOpacity>
         </Link>
 
-         <Link href="/dailylog" asChild>
+         <Link href="/sleep_entry" asChild>
         <TouchableOpacity>
           <Text style={styles.link}>Testing Daily Log</Text>
         </TouchableOpacity>

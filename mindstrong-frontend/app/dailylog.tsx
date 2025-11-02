@@ -16,6 +16,16 @@ export default function DailyLog() {
     const [wakeAmPm, setWakeAmPm] = useState<"AM" | "PM">("AM");
     const [totalSleepHours, setTotalSleepHours] = useState<number | null>(null);
 
+    /* Exercise entry */ 
+
+    const [exerciseEntry, setExerciseEntry] = useState<"Yes" | "No">("Yes");
+
+    /* Food entry */
+
+    const [enterBreakfast, setBreakfast] = useState<"Yes" | "No" | "NA">("Yes");
+    const [enterLunch, setLunch] = useState<"Yes" | "No" | "NA">("Yes");
+    const [enterDinner, setDinner] = useState<"Yes" | "No" | "NA">("Yes");
+
     /* Helper function to convert the user sleep entry input into 24 hour format */
     
     const convertTo24Hour = (hourStr: string, period: "AM" | "PM"): number | null => {
@@ -49,46 +59,79 @@ export default function DailyLog() {
             <Text style={styles.label}>Bed Time:</Text>
             <View style={styles.row}>
                 <TextInput
-                    placeholder="Hour (1-12"
+                    placeholder="HR:MIN"
                     keyboardType="numeric"
                     value={bedTime}
                     onChangeText={setBedTime}
                     style={styles.input}/>
                 
                 <View style={styles.pickerContainer}>
-                <Picker
-                    selectedValue={bedAmPm}
-                    style={styles.picker}
-                    onValueChange={(value) => setBedAmPm(value)}
-                    dropdownIconColor={"#333"}>
+                    <Picker
+                        selectedValue={bedAmPm}
+                        style={styles.picker}
+                        onValueChange={(value) => setBedAmPm(value)}
+                        dropdownIconColor={"#333"}>
                     
-                    <Picker.Item label="AM" value="AM" />
-                    <Picker.Item label="PM" value="PM" />
-
-                </Picker>
+                        <Picker.Item label="AM" value="AM" />
+                        <Picker.Item label="PM" value="PM" />
+                    </Picker>
+                </View>
             </View>
-        </View>
 
             <Text style={styles.label}>Wake Time:</Text>
             <View style={styles.row}>
                 <TextInput
-                    placeholder="Hour (1-12)"
+                    placeholder="HR:MIN"
                     keyboardType="numeric"
                     value={wakeTime}
                     onChangeText={setWakeTime}
-                    style={{ borderWidth: 1, padding: 5, width: 80, marginRight: 10 }}></TextInput>
+                    style={styles.input}/>
 
-                <View style={styles.pickerWrapper}>
-                <Picker 
-                    selectedValue={wakeAmPm}
-                    style={styles.picker}
-                    onValueChange={(value) => setWakeAmPm(value)}>
+                <View style={styles.pickerContainer}>
+                    <Picker 
+                        selectedValue={wakeAmPm}
+                        style={styles.picker}
+                        onValueChange={(value) => setWakeAmPm(value)}>
 
-                    <Picker.Item label="AM" value="AM"/>
-                 <Picker.Item label="PM" value="PM"/>    
-                </Picker>
+                        <Picker.Item label="AM" value="AM"/>
+                        <Picker.Item label="PM" value="PM"/>    
+                    </Picker>
+            
+                </View>
             </View>
-        </View>
+
+            <Text style={styles.label}>Exercise Entry:</Text>
+            <View style={styles.row}>
+                <Text style={styles.label}>Exercised for at least 20 minutes?</Text>
+                <View style={styles.pickerContainer}>
+                    <Picker 
+                        selectedValue={exerciseEntry}
+                        style={styles.picker}
+                        onValueChange={(value) => setExerciseEntry(value)}>
+
+                        <Picker.Item label="Yes" value="Yes"/>
+                        <Picker.Item label="No" value="No"/>
+                    </Picker>
+                </View>
+            </View>
+
+            <Text style={styles.title}>Food Entry</Text>
+            <Text style={styles.label}>Choose "NA" if you skipped a meal</Text>
+            <View style={styles.column}>
+                <Text style={styles.label}>Breakfast:</Text>
+                <Text style={styles.label}>Did you eat a breakfast with protein and carbs?</Text>
+                <View style={styles.pickerContainer}>
+                    <Picker
+                        selectedValue={enterBreakfast}
+                        style={styles.picker}
+                        onValueChange={(value) => setBreakfast(value)}>
+
+                        <Picker.Item label="Yes" value="Yes"/>
+                        <Picker.Item label="No" value="No"/>
+                        <Picker.Item label="N/A" value="N/A"/>
+                    </Picker>
+                </View>
+            </View>
 
             {totalSleepHours !== null && (
                 <Text style={styles.resultText}>Total Sleep: {totalSleepHours} hours</Text>
@@ -105,6 +148,8 @@ const styles = StyleSheet.create({
         padding: 20, 
     },
 
+    title: { fontSize: 20, fontWeight: "500"},
+
     label: {
         fontSize: 16, 
         marginBottom: 6, 
@@ -115,6 +160,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 20, 
+    },
+
+    column: {
+        flexDirection: "column",
+        alignItems: "flex-start",
+        width: "100%",
+        marginVertical: 10,
     },
 
     input: {
@@ -128,25 +180,22 @@ const styles = StyleSheet.create({
         marginRight: 10, 
     },
 
-    pickerWrapper: {
-        borderWidth: 1, 
-        borderColor: "#ccc",
-        borderRadius: 8, 
-        overflow: "hidden",
-
-    },
-
     pickerContainer: {
         width: 100, 
         borderWidth: 1, 
         borderColor: "#ccc",
-        borderRadius: 6, 
+        borderRadius: 6,
+        height: 50, 
+        justifyContent: "center",
+        alignItems: "center",
+        overflow: "hidden", 
+        marginTop: 8, 
     },
 
     picker: {
-        height: 42, 
-        width: 100, 
-        transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }]
+        height: 50, 
+        width: "100%", 
+        marginTop: 0,
     },
     
     resultText: {
