@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { Link, useRouter } from "expo-router";
+import { Link, useRouter, Stack } from "expo-router";
 
 
 /* This sleep entry page will link to the user profile page */
@@ -106,6 +106,9 @@ export default function SleepEntry() {
     };
 
     return (
+
+        <>
+        <Stack.Screen options={{ title: "Sleep" }}/>
         <ScrollView>
             <View style={styles.container}>
                 <Text style={styles.title}>Sleep</Text>
@@ -161,6 +164,7 @@ export default function SleepEntry() {
 
                 </View>
             </ScrollView>
+            </>
     );
 
 }

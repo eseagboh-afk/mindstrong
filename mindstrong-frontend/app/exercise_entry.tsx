@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Stack } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 
 /* This exercise entry page will link to the sleep entry page */
@@ -27,11 +27,14 @@ export default function ExerciseEntry() {
             Alert.alert("Please select yes or no")
             return;
         }
+
+        router.push("/food_entry");
     }
 
-    router.push("/food_entry");
-
     return (
+
+        <>
+        <Stack.Screen options={{ title: "Exercise" }}/>
 
         <View> 
             <View style={styles.container}>
@@ -59,7 +62,9 @@ export default function ExerciseEntry() {
                 </TouchableOpacity>
             </View>
         </View>
+        </>
     )
+
 
 
 

@@ -1,6 +1,7 @@
 import { Text, View, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
+import { Stack } from "expo-router";
 
 /* Sign up page links to homepage*/
 
@@ -32,6 +33,9 @@ export default function SignUp()
     };
 
 return(
+
+    <>
+    <Stack.Screen options={{ title: "Sign Up" }}/>
     <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.main}>
             <Text style={styles.title}>Sign Up</Text>
@@ -137,6 +141,7 @@ return(
             <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
     </ScrollView>
+    </>
 
     
     );

@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { Link } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 /* How it works page will link to homepage */
@@ -8,6 +8,9 @@ export default function HowItWorks ()
 {
     /* Description of how the application works */ 
 return (
+
+    <>
+    <Stack.Screen options={{ title: "How It Works" }}/>
     <SafeAreaView style={styles.screen}>
         <ScrollView contentContainerStyle={[styles.container, { flexGrow: 1, paddingBottom: 100}]}>
             <Text style={styles.header}>How it Works</Text>
@@ -37,6 +40,7 @@ return (
 
         </ScrollView>
     </SafeAreaView>
+    </>
 );
 }
 
