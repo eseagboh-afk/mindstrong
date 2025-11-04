@@ -1,7 +1,7 @@
-import { Text, View, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 
 /* Sign up page links to homepage*/
 
@@ -9,6 +9,8 @@ export default function SignUp()
 {
     /* User attributes needed at sign up*/ 
 
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [pseudonym, setPseudonym] = useState("");
     const [dob, setDob] = useState("");
     const [genderIdentity, setGenderIdentity] = useState("F");
@@ -17,6 +19,7 @@ export default function SignUp()
     const [relationshipStatus, setRelationshipStatus] = useState<string[]>([]);
     const [griefStatus, setGriefStatus] = useState<string[]>([]);
     const [relocationStatus, setRelocationStatus] = useState<string[]>([]);
+    const router = useRouter();
 
     const toggleEmployment = (option: string) => 
     {
@@ -27,10 +30,33 @@ export default function SignUp()
         );
     };
 
-    const handleSubmit = () => 
-    {
-        console.log({ pseudonym, dob, genderIdentity, genderAtBirth, employmentStatus, relationshipStatus, griefStatus, relocationStatus });
+    const handleSignup = async () => {
+        try {
+            const response = await fetch ('http://127.0.0.1:8000/api/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+
+                body: JSON.stringify({ pseudonym, email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Alert.alert("Success", "Account created!");
+                router.push('/');
+
+            } else {
+                Alert.alert("Error", JSON.stringify(data));
+            }
+        } catch (err) {
+            Alert.alert('Error', 'Something went wrong.');
+            console.log(err);
+        }
     };
+
 
 return(
 
@@ -41,6 +67,22 @@ return(
             <Text style={styles.title}>Sign Up</Text>
             <Text style={styles.subtitle}>Create your free account</Text>
         </View>
+
+        <Text style={styles.label}>What's your email?</Text>
+        <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={setEmail}
+        />
+
+        <Text style={styles.label}>Choose a password</Text>
+        <TextInput
+            style={styles.input}
+            placeholder="Choose a password"
+            value={password}
+            onChangeText={setPassword}
+        />
 
         {/* Pseudonym */}
         <Text style ={styles.label}>Choose a psuedonym</Text>
@@ -137,7 +179,7 @@ return(
         </Picker>
 
         { /* Submit button */ }
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <TouchableOpacity style={styles.submitButton} onPress={handleSignup}>
             <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
     </ScrollView>
