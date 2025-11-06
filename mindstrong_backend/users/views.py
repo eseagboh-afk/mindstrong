@@ -1,55 +1,21 @@
-tfrom django.shortcuts import render
 from rest_framework import generics, permissions
 from .serializers import UserSerializer, UserProfileSerializer
 from django.contrib.auth.models import User
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
 from .models import UserProfile
 from django.contrib.auth import authenticate
 
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
     
 class SignupView(generics.CreateAPIView):
-    queryset = UserProfile.objects.all() (#should this be User or UserProfile? Thinking UserProfile, b/c that's the class I have defined in my models.py file)
-    serializer_class = UserSerializer
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
     permissions_classes = [permissions.AllowAny]
+        
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permissions_classes = [permissions.IsAuthenticated]
     
-    def post(self, request):
-        username = request.data.get('pseudonym')
-        email = request.data.get('email')
-        password = request.data.get('password')
-        
-        user = User.objects.create_user(username=pseudonym, email=email, password=password)
-        
-        profile_data = {
-        
-            'dob' : request.data.get('dob'),
-            'genderIdentity' : request.data.get('genderIdentity'),
-            'genderAtBirth' : request.data.get('genderAtBirth'),
-            'employmentStatus' : request.data.get('employmentStatus'),
-            'relationshipStatus' : request.data.get('relationshipStatus'),
-            'griefStatus' : request.data.get('griefStatus'),
-            'relocationStatus' : request.data.get('relocationStatus'),
-        }
-        
-        UserProfile.objects.create(user=user, **profile_data)
-        
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'pseudonym': user.username, 'email':user.email})
-    
-class LoginView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-        
-class UserDetail(generics.RetrieveAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-        
     def get_object(self):
-        return self.request.user
+        return UserProfile.objects.get(user=self.request.user)
             
 
 # Create your views here.
