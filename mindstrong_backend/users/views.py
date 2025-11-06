@@ -1,4 +1,4 @@
-from django.shortcuts import render
+tfrom django.shortcuts import render
 from rest_framework import generics, permissions
 from .serializers import UserSerializer, UserProfileSerializer
 from django.contrib.auth.models import User
@@ -13,14 +13,16 @@ class UserList(generics.ListAPIView):
     serializer_class = UserSerializer
     
 class SignupView(generics.CreateAPIView):
+    queryset = UserProfile.objects.all() (#should this be User or UserProfile? Thinking UserProfile, b/c that's the class I have defined in my models.py file)
+    serializer_class = UserSerializer
     permissions_classes = [permissions.AllowAny]
     
     def post(self, request):
-        pseudonym = request.data.get('pseudonym')
+        username = request.data.get('pseudonym')
         email = request.data.get('email')
         password = request.data.get('password')
         
-        user = User.objects.create_user(pseudonym=pseudonym, email=email, password=password)
+        user = User.objects.create_user(username=pseudonym, email=email, password=password)
         
         profile_data = {
         
@@ -36,7 +38,7 @@ class SignupView(generics.CreateAPIView):
         UserProfile.objects.create(user=user, **profile_data)
         
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'pseudonym': user.pseudonym, 'email':user.email})
+        return Response({'token': token.key, 'pseudonym': user.username, 'email':user.email})
     
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]

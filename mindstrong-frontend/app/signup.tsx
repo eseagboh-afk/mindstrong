@@ -11,6 +11,7 @@ export default function SignUp()
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
     const [pseudonym, setPseudonym] = useState("");
     const [dob, setDob] = useState("");
     const [genderIdentity, setGenderIdentity] = useState("F");
@@ -19,6 +20,7 @@ export default function SignUp()
     const [relationshipStatus, setRelationshipStatus] = useState<string[]>([]);
     const [griefStatus, setGriefStatus] = useState<string[]>([]);
     const [relocationStatus, setRelocationStatus] = useState<string[]>([]);
+    const [userConsent, setUserConsent] = useState("Yes");
     const router = useRouter();
 
     const toggleEmployment = (option: string) => 
@@ -31,15 +33,21 @@ export default function SignUp()
     };
 
     const handleSignup = async () => {
+
+        if (!userConsent || userConsent == "No"){
+            Alert.alert("You'll need to agree to storage and analysis of your information")
+        }
         try {
-            const response = await fetch ('http://127.0.0.1:8000/api/signup', {
+            const response = await fetch ('http://127.0.0.1:8000/api/signup/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
 
                 },
 
-                body: JSON.stringify({ pseudonym, email, password }),
+                body: JSON.stringify({ pseudonym, email, password, dob, genderIdentity, genderAtBirth,
+                    employmentStatus, relationshipStatus, griefStatus, relocationStatus
+                 }),
             });
 
             const data = await response.json();
@@ -82,6 +90,15 @@ return(
             placeholder="Choose a password"
             value={password}
             onChangeText={setPassword}
+        />
+
+        {/* Username */}
+        <Text style={styles.label}>Choose a username</Text>
+        <TextInput 
+            style={styles.input}
+            placeholder="Choose a username"
+            value={username}
+            onChangeText={setUsername}
         />
 
         {/* Pseudonym */}
@@ -178,6 +195,21 @@ return(
             <Picker.Item label="Prefer not to say" value="Prefer not to say"/>
         </Picker>
 
+        <Text style={styles.label}>Do you consent to storage and analysis of user information?</Text>
+        <Text style={styles.paragraph}>We only store what is absolutely necessary to create your mental health analysis.
+        </Text>
+
+        <Picker 
+            selectedValue={userConsent}
+            onValueChange={(itemValue) => setUserConsent(itemValue)}
+            style={styles.picker}>
+            
+            <Picker.Item label="Yes" value="Yes"/>
+            <Picker.Item label="No" value="No"/>
+
+        </Picker>
+
+
         { /* Submit button */ }
         <TouchableOpacity style={styles.submitButton} onPress={handleSignup}>
             <Text style={styles.submitText}>Submit</Text>
@@ -197,6 +229,7 @@ const styles = StyleSheet.create({
     title: { fontSize: 32, fontWeight: "700"},
     subtitle: { fontSize: 18, color: "#555", marginTop: 20},
     label: {fontSize: 16, marginTop: 12, marginBottom: 4 },
+    paragraph: { fontSize: 14, marginTop: 12, marginBottom: 4},
     input: 
     {
         borderWidth: 1, 
