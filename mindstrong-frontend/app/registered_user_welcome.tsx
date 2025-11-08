@@ -2,7 +2,7 @@ import { Link } from "expo-router";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Stack } from "expo-router";
 
-export default function Welome() {
+export default function RegisteredUserWelome() {
   return (
 
   <>
@@ -10,31 +10,33 @@ export default function Welome() {
 
     <View
       style={styles.container}>
-        {/* Application name container in upper left corner*/}
         <View style={styles.header}>
           <Text style={styles.title}>MindStrong</Text>
         </View>
 
-        {/* Welcome page content in center, redirects to relevant pages*/}
         <View style={styles.main}>
           <Text style={styles.welcome}>Welcome</Text>
 
+         <Text style={styles.paragraph}>
+            Click Daily Log to begin filling out your daily log. Click Analysis to see your
+            mental health analysis every 21 days. Click Profile to view and edit your profile.
+        </Text>
 
-        <Link href="/signup" asChild>
+        <Link href="/sleep_entry" asChild>
         <TouchableOpacity>
-          <Text style={styles.link}>Sign Up</Text>
+            <Text style={styles.link}>Daily Log</Text>
         </TouchableOpacity>
         </Link>
 
-        <Link href="/sign_in" asChild>
+        <Link href="/analysis" asChild>
         <TouchableOpacity>
-          <Text style={styles.link}>Sign In</Text>
+            <Text style={styles.link}>Analysis</Text>
         </TouchableOpacity>
         </Link>
 
-        <Link href="/howitworks" asChild>
+        <Link href="/user_profile" asChild>
         <TouchableOpacity>
-          <Text style={styles.link}>How it Works</Text>
+            <Text style={styles.link}>View Profile</Text>
         </TouchableOpacity>
         </Link>
 
@@ -56,8 +58,6 @@ const styles= StyleSheet.create({
     paddingTop: 40, 
   },
 
-  /* Application name container in upper left corner*/
-
   header: 
   {
     alignItems: "flex-start", 
@@ -70,8 +70,6 @@ const styles= StyleSheet.create({
     fontWeight: "600",
 
   },
-
-  /* Welcome page content in middle of page*/
 
   main: 
   {
@@ -94,5 +92,12 @@ const styles= StyleSheet.create({
     color: "#000",
     marginBottom: 20, 
   },
+
+  paragraph: {
+        fontSize: 16, 
+        lineHeight: 22, 
+        color: "#333",
+        marginBottom: 16, 
+    },
 
 });
