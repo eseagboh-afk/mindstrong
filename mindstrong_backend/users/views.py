@@ -8,14 +8,15 @@ from django.contrib.auth import authenticate
 class SignupView(generics.CreateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permissions_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]
         
-class UserProfileView(generics.RetrieveAPIView):
+class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
-    permissions_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_object(self):
-        return UserProfile.objects.get(user=self.request.user)
+        profile,created=UserProfile.objects.get_or_create(user=self.request.user)
+        return profile
             
 
 # Create your views here.

@@ -23,8 +23,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'pseudonym',
             'dob', 'genderIdentity', 'genderAtBirth',
             'employmentStatus', 'relationshipStatus',
-            'griefStatus', 'relocationStatus'
+            'griefStatus', 'relocationStatus', 'created_at', 'updated_at'
         ]
+        
+        read_only_field = ['created_at', 'updated_at', 'dob', 'genderAtBirth']
         
     def create(self, validated_data):
     
