@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { Text, View, StyleSheet, Alert, TextInput, Button, } from "react-native";
+import * as SecureStore from "expo-secure-store";
+
 
 
 export default function UserProfile() {
@@ -9,40 +11,49 @@ export default function UserProfile() {
     const [genderIdentity, setGenderIdentity] = useState("");
     const [relationshipStatus, setRelationshipStatus] = useState("");
     const [employmentStatus, setEmploymentStatus] = useState("");
+    const API_BASE = "http://127.0.0.1:8000/api/profile/";
 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/api/profile", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                /*"Authorization": `Token ${token}`,*/
+        const fetchProfile = async () => {
+            try {
+                const token = await SecureStore.getItemAsync("userToken");
+                if (!token) throw new Error("No token found");
+                
+            const res = await fetch(API_BASE, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`,
 
             },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setPseudonym(data.pseudonym || "");
-                setGenderIdentity(data.gender_identity || "");
-                setRelationshipStatus(data.relationship_status || "");
-                setEmploymentStatus(data.employment_status || "");
-                setLoading(false);
+        });
 
-            })
+        if (!res.ok) throw new Error(`Error ${res.status}`);
 
-            .catch((err) => {
-                console.error("Error fetching profile:", err);
-                Alert.alert("Error", "Unable to load profile data.");
-            });
+        const data = await res.json();
+
+        setPseudonym(data.pseudonym || "");
+        setGenderIdentity(data.gender_identity || "");
+        setRelationshipStatus(data.relationship_status || "");
+        setEmploymentStatus(data.employment_status || "");
+        setLoading(false);
+        } catch (err) {
+            console.error("Error fetching profile:", err);
+            Alert.alert("Error", "Unable to load profile data.");
+            setLoading(false);
+        }
+    };
+
+        fetchProfile();
     }, []);
     
     const handleSave = () => {
-        fetch("http://127.0.0.1:8000/api/profile", {
+        fetch(`${API_BASE}/api/token-auth/`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                /*"Authorization": `Token ${token}`,*/
 
             },
 

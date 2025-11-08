@@ -24,14 +24,13 @@ export default function SignUp()
     const [userConsent, setUserConsent] = useState("Yes");
     const router = useRouter();
 
-    {const toggleEmployment = (option: string) => 
-    {
+    const toggleEmployment = (option: string) => {
         setEmploymentStatus(prev =>
             prev.includes(option)
                 ? prev.filter(item => item !== option)
                 : [...prev, option]
         );
-    }}
+    };
 
     const handleSignup = async () => {
 
@@ -64,6 +63,8 @@ export default function SignUp()
             Alert.alert('Error', 'Something went wrong.');
             console.log(err);
         }
+
+        router.push('/post_sign_up')
     };
 
 
