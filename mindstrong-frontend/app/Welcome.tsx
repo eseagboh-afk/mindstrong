@@ -32,9 +32,9 @@ export default function Welome() {
         </TouchableOpacity>
         </Link>
 
-        <Link href="/sleep_entry" asChild>
+        <Link href="/user_profile" asChild>
         <TouchableOpacity>
-          <Text style={styles.link}>Testing Daily Log</Text>
+          <Text style={styles.link}>Testing User Profile</Text>
         </TouchableOpacity>
         </Link>
         </View>
