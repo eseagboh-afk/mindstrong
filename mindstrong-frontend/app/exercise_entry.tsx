@@ -12,24 +12,51 @@ export default function ExerciseEntry() {
     /* Exercise entry */
 
     const router = useRouter();
+    const token = "ce8cc5b939dd44d9cad7089f448887e560d467a2";
 
     const [exerciseEntry, setExerciseEntry] = useState<boolean | null>(null);
     const [isPickerVisible, setPickerVisible] = useState(false);
 
-    const exerciseEntryData = {
-        exerciseEntry,
-        timestamp: new Date().toISOString(),
 
-    }
-
-    const handleSaveAndContinue = () => {
+    const handleSaveAndContinue = async () => {
         if (!exerciseEntry) {
             Alert.alert("Please select yes or no")
             return;
         }
 
+        const exerciseEntryData = {
+        exerciseEntry,
+        timestamp: new Date().toISOString(),
+
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/exercise_entries/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+
+            body: JSON.stringify(exerciseEntry),
+        });
+
+        if (!res.ok) {
+            const errData = await res.json();
+            console.error("Error saving exercise entry:", errData);
+            Alert.alert("Error", "Could not save your food entry,");
+            return;
+        }
+
+        Alert.alert("Success", "Your exercise entry has been saved!");
         router.push("/food_entry");
+    } catch (error) {
+        console.error("Network error:", error);
+        Alert.alert("Network error", "Could not connect to server.")
     }
+
+
+    };
 
     return (
 
