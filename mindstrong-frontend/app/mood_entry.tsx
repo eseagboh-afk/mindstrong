@@ -11,26 +11,90 @@ export default function Mood() {
     /* Mood entry */ 
 
     const router = useRouter();
+    const token = "ce8cc5b939dd44d9cad7089f448887e560d467a2";
 
-    const [moodEntry, setMoodEntry] = useState<"Poor" | "Alright" |"Pretty Goal" | "Excellent">("Excellent");
+    const [moodEntry, setMoodEntry] = useState<"Poor" | "Alright" |"Pretty Good" | "Excellent">("Excellent");
     const [workEntry, setWorkEntry] = useState<"Yes" | "No">("Yes");
     const [socialEntry, setSocialEntry] = useState<"Yes" | "No">("Yes");
 
-    const moodEntryData = {
-        moodEntry, 
-        workEntry, 
-        socialEntry,
-        timestamp: new Date().toISOString(),
-    }
 
-    const handleSaveAndContinue = () => {
+    const handleSaveAndContinue = async () => {
         if(!moodEntry || !workEntry || !socialEntry) {
             Alert.alert("Please complete your entry for all questions")
             return;
         }
+
+        const convertMoodToInt = (value: string): number => {
+            switch (value) {
+                case "Poor":
+                    return -1;
+                case "Alright":
+                    return 0;
+                case "Pretty Good":
+                    return 1;
+                case "Excellent":
+                    return 2;
+                default:
+                    return 0;
+            }
+        };
+
+        const convertWorkToInt = (value: string): number => {
+            switch (value) {
+                case "Yes":
+                    return +1
+                case "No":
+                    return 0
+                default:
+                    return 0;
+            }
+        };
+
+        const convertSocialToInt = (value: string): number => {
+            switch (value) {
+                case "Yes":
+                    return +1
+                case "No":
+                    return -1
+                default:
+                    return 0;
+            }
+        };
+
+        const moodValue = (convertMoodToInt(moodEntry) + convertWorkToInt(workEntry) + convertSocialToInt(socialEntry))
+
+        const moodEntryData = {
+            moodValue,
+            timestamp: new Date().toISOString(),
+        };
+
+        try 
+        {
+            const res = await fetch("http://127.0.0.1:8000/api/mood_entries/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(moodEntryData),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                console.error("Error saving food entry:", errData);
+                Alert.alert("Error", "Could not save your mood entry,");
+                return;
+            }
+
+            Alert.alert("Success", "Your food entry has been saved");
+            router.push("/journal_entry");
+
+    } catch(error){
+        console.error("Network error", error);
+        Alert.alert("Network error", "Could not connect to server.");
     }
 
-    router.push("/journal_entry");
+    };
 
     return (
 

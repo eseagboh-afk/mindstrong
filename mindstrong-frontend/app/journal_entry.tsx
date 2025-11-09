@@ -6,20 +6,48 @@ export default function Journal() {
     
     const [journalEntry, setJournalEntry] = useState("");
     const router = useRouter();
+    const token = "ce8cc5b939dd44d9cad7089f448887e560d467a2";
 
-    const handleSave = () => {
-       return;
-    }
+    const handleSave = async () => {
 
-    const journalEntryData = {
-        journalEntry,
-        timestamp: new Date().toISOString(),
-    }
+        const journaled = journalEntry.trim().length > 0;
+        const journalEntryData = {
+            journaled, 
+            timestamp: new Date().toISOString(),
+        };
 
-    router.push("/");
+        try {
+            const res = await fetch("http://127.0.0.1:8000/api/journal_entries/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
 
+                },
 
-return (
+                body: JSON.stringify(journalEntryData),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                console.error("Error processing your journal entry:", errData);
+                Alert.alert("Error");
+                return;
+            }
+
+            Alert.alert(
+                "Thanks for sharing your thoughts!",
+                "For privacy, your exact journal entry wasn't stored. We noted that you journaled today for analysis."
+            );
+            router.push("/");
+
+        } catch(error) {
+            console.error("Network error:", error);
+            Alert.alert("Network error. Please try again.");
+        }
+    };
+
+    return (
     <>
         <Stack.Screen options={{ title: "Journal Entry" }}/>
         <View style={styles.container}>
