@@ -11,27 +11,63 @@ export default function Food() {
     /* Food entry */ 
 
     const router = useRouter();
+    const token = "ce8cc5b939dd44d9cad7089f448887e560d467a2";
 
     const [breakfastEntry, setBreakfastEntry] = useState<"Yes" | "No" |"Skipped Meal">("Yes");
     const [lunchEntry, setLunchEntry] = useState<"Yes" | "No" | "Skipped Meal">("Yes");
     const [dinnerEntry, setDinnerEntry] = useState<"Yes" | "No" | "Skipped Meal">("Yes");
 
-    const handleSaveAndContinue = () => {
+    const handleSaveAndContinue = async () => {
         if(!breakfastEntry || !lunchEntry || !dinnerEntry) {
             Alert.alert("Please complete your entry for all meals")
             return;
         }
 
+        const convertToInt = (value: string): number => {
+            switch (value) {
+                case "Yes":
+                    return 1;
+                case "No":
+                    return 0;
+                case "Skipped Meal":
+                    return -1;
+                default:
+                    return -1;
+            }
+        };
+
+        const foodValue = (convertToInt(breakfastEntry) + convertToInt(lunchEntry) + convertToInt(dinnerEntry));
+
         const foodEntryData = {
-        breakfastEntry, 
-        lunchEntry, 
-        dinnerEntry,
+        foodValue,
         timestamp: new Date().toISOString(),
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/food_entries/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, 
+            },
+            body: JSON.stringify(foodEntryData),
+        });
+
+        if (!res.ok) {
+            const errData = await res.json();
+            console.error("Error saving food entry:", errData);
+            Alert.alert("Error", "Could not save your food entry,");
+            return;
+        }
+
+        Alert.alert("Success", "Your food entry has been saved!");
+        router.push("/mood_entry");
+    } catch(error) {
+        console.error("Network error:", error);
+        Alert.alert("Network error", "Could not connect to server.")
     }
 
-    router.push("/mood_entry");
-
-    }
+    };
 
     return (
 
