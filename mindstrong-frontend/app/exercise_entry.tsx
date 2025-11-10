@@ -1,5 +1,6 @@
 /* Import necessary libraries */
 
+import * as SecureStore from "expo-secure-store"
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { useRouter, Stack } from "expo-router";
@@ -12,10 +13,18 @@ export default function ExerciseEntry() {
     /* Exercise entry */
 
     const router = useRouter();
-    const token = "ce8cc5b939dd44d9cad7089f448887e560d467a2";
 
     const [exerciseEntry, setExerciseEntry] = useState<boolean | null>(null);
     const [isPickerVisible, setPickerVisible] = useState(false);
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadToken = async () => {
+            const storedToken = await SecureStore.getItemAsync("authToken");
+            setToken(storedToken);
+        };
+        loadToken();
+    }, []);
 
 
     const handleSaveAndContinue = async () => {
@@ -35,10 +44,10 @@ export default function ExerciseEntry() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                Authorization: `Token ${token}`,
             },
 
-            body: JSON.stringify(exerciseEntry),
+            body: JSON.stringify(exerciseEntryData),
         });
 
         if (!res.ok) {

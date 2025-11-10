@@ -10,7 +10,7 @@ export default function SignIn () {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const API_BASE = "http://127.0.0.1:8000/";
+    
 
     async function handleSignIn() {
         if (!username || !password) {
@@ -21,7 +21,7 @@ export default function SignIn () {
         setLoading(true);
 
         try {
-            const res = await fetch(`${API_BASE}/api/token-auth/`, {
+            const res = await fetch('http://127.0.0.1/api/login/', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),

@@ -86,7 +86,7 @@ export default function SleepEntry() {
         setTotalSleepHours(Math.round(sleepDuration));
     }, [bedTime, wakeTime]);
 
-    const handleSaveAndContinue = () => {
+    const handleSaveAndContinue = async () => {
         if (!totalSleepHours) {
             Alert.alert("Please enter a bed time and a wake time.")
             return;
@@ -99,7 +99,28 @@ export default function SleepEntry() {
             timestamp: new Date().toISOString(),
         }
 
+        try {
+        const res = await fetch("http://127.0.0.1:8000/api/sleep_entries/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json", 
+            },
+            body: JSON.stringify(sleepEntryData),
+        });
+
+        if (!res.ok) {
+            const errData = await res.json();
+            console.error("Error saving sleep entry:", errData);
+            Alert.alert("Error", "Could not save your sleep entry,");
+            return;
+        }
+
+        Alert.alert("Success", "Your sleep entry has been saved!");
         router.push("/exercise_entry");
+    } catch(error) {
+        console.error("Network error:", error);
+        Alert.alert("Network error", "Could not connect to server.")
+    }
 
 
 

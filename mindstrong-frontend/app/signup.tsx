@@ -105,7 +105,7 @@ return(
             />
 
         {/* Pseudonym */}
-            <Text style ={styles.label}>Choose a psuedonym</Text>
+            <Text style ={styles.label}>Choose a pseudonym</Text>
             <TextInput 
                 style={styles.input}
                 placeholder="Enter a pseudonym for privacy"

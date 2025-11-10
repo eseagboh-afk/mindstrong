@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import SignupView, UserProfileView, SleepEntryView, ExerciseEntryView, FoodEntryView, MoodEntryView, JournalEntryView, AnalysisView
-from rest_framework.authtoken import Token
+from .views import SignupView, UserProfileView, SleepEntryView, ExerciseEntryView, FoodEntryView, MoodEntryView, JournalEntryView, AnalysisView, LoginView
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('signup/', SignupView.as_view(), name='signup'),
+    path('login/', LoginView.as_view(), name='login'),
     path('profile/', UserProfileView.as_view(), name='profile'),
     path('sleep_entries/', SleepEntryView.as_view(), name='sleep_entries'),
     path('exercise_entries/', ExerciseEntryView.as_view(), name='exercise_entries'),

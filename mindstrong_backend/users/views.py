@@ -1,5 +1,7 @@
 from rest_framework import generics, permissions, views, response, status
+from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.views import APIView
 from .serializers import UserSerializer, UserProfileSerializer, SleepEntrySerializer, ExerciseEntrySerializer, FoodEntrySerializer, MoodEntrySerializer, JournalEntrySerializer
 from django.contrib.auth.models import User
 from .models import UserProfile
@@ -14,9 +16,26 @@ class SignupView(generics.CreateAPIView):
     
     def perform_create(self, serializer):
         user = serializer.save()
-        Token.objects.create(user=User)
+        token, _ = Token.objects.create(user=User)
         UserProfile.objects.create(user=user)
         print(token.key)
+        
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({"error": "Invalid credentials"}, status=400)
+        
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({
+            "token": token.key,
+            "username": user.username
+        })
         
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer

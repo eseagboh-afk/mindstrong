@@ -11,7 +11,7 @@ export default function Food() {
     /* Food entry */ 
 
     const router = useRouter();
-    const token = "ce8cc5b939dd44d9cad7089f448887e560d467a2";
+    
 
     const [breakfastEntry, setBreakfastEntry] = useState<"Yes" | "No" |"Skipped Meal">("Yes");
     const [lunchEntry, setLunchEntry] = useState<"Yes" | "No" | "Skipped Meal">("Yes");
@@ -47,8 +47,7 @@ export default function Food() {
         const res = await fetch("http://127.0.0.1:8000/api/food_entries/", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`, 
+                "Content-Type": "application/json", 
             },
             body: JSON.stringify(foodEntryData),
         });
