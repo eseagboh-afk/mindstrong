@@ -1,9 +1,11 @@
 /* Import necessary libraries */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Alert, TouchableOpacity, ScrollView, Platform} from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
+import  API_URL  from "../src/config";
+import * as SecureStore from "expo-secure-store";
 
 /* This food entry page will link to the exercise entry page */
 
@@ -16,6 +18,17 @@ export default function Food() {
     const [breakfastEntry, setBreakfastEntry] = useState<"Yes" | "No" |"Skipped Meal">("Yes");
     const [lunchEntry, setLunchEntry] = useState<"Yes" | "No" | "Skipped Meal">("Yes");
     const [dinnerEntry, setDinnerEntry] = useState<"Yes" | "No" | "Skipped Meal">("Yes");
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadToken = async () => {
+            const storedToken = await SecureStore.getItemAsync("authToken");
+            setToken(storedToken);
+        };
+        
+        loadToken();
+    }, []);
+    
 
     const handleSaveAndContinue = async () => {
         if(!breakfastEntry || !lunchEntry || !dinnerEntry) {
@@ -39,15 +52,16 @@ export default function Food() {
         const foodValue = (convertToInt(breakfastEntry) + convertToInt(lunchEntry) + convertToInt(dinnerEntry));
 
         const foodEntryData = {
-        foodValue,
+        food: foodValue,
         timestamp: new Date().toISOString(),
     };
 
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/food_entries/", {
+        const res = await fetch(`${API_URL}/api/food_entries/`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json", 
+                "Content-Type": "application/json",
+                Authorization: `Token ${token}`, 
             },
             body: JSON.stringify(foodEntryData),
         });

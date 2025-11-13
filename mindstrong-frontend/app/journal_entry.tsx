@@ -1,27 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Stack, useRouter } from "expo-router";
+import API_URL from "@/src/config";
+import * as SecureStore from "expo-secure-store";
 
 export default function Journal() {
     
     const [journalEntry, setJournalEntry] = useState("");
     const router = useRouter();
-    const token = "ce8cc5b939dd44d9cad7089f448887e560d467a2";
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadToken = async () => {
+            const storedToken = await SecureStore.getItemAsync("authToken");
+            setToken(storedToken);
+            };
+                
+            loadToken();
+        }, []);
 
     const handleSave = async () => {
 
         const journaled = journalEntry.trim().length > 0;
         const journalEntryData = {
-            journaled, 
+            journaled_status: journaled, 
             timestamp: new Date().toISOString(),
         };
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/api/journal_entries/", {
+            const res = await fetch(`${API_URL}/api/journal_entries/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    "Authorization": `Token ${token}`,
 
                 },
 
@@ -39,7 +50,7 @@ export default function Journal() {
                 "Thanks for sharing your thoughts!",
                 "For privacy, your exact journal entry wasn't stored. We noted that you journaled today for analysis."
             );
-            router.push("/");
+            router.push("/registered_user_welcome");
 
         } catch(error) {
             console.error("Network error:", error);

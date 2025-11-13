@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import { Stack, useRouter, Link } from "expo-router";
 import { Text, View, StyleSheet, Alert, TextInput, Button, TouchableOpacity } from "react-native";
-import { saveToken } from "../utils/authToken";
+import * as SecureStore from "expo-secure-store";
+import  API_URL  from "../src/config";
 
 export default function SignIn () {
 
     const router = useRouter();
     
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     
 
     async function handleSignIn() {
-        if (!username || !password) {
+        if (!username || !password || !email) {
             Alert.alert("Missing fields", "Please enter both username and password.");
             return;
         }
@@ -21,10 +23,10 @@ export default function SignIn () {
         setLoading(true);
 
         try {
-            const res = await fetch('http://127.0.0.1/api/login/', {
+            const res = await fetch(`${API_URL}/api/login/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username, email, password }),
             });
 
             const data = await res.json();
@@ -36,14 +38,16 @@ export default function SignIn () {
                 return;
             }
 
-            const token = data.token || data.key || data.auth_token || data?.user?.token;
+            const token = data.token;
             
             if (!token) {
                 Alert.alert("Error", "No token received from the server.");
+                setLoading(false);
                 return;
             }
 
-            await saveToken(token);
+            await SecureStore.setItemAsync("authtoken", data.token)
+
             Alert.alert("Success", "Signed in successfully!");
             router.replace("/user_profile");
 
@@ -54,7 +58,7 @@ export default function SignIn () {
             setLoading(false);
         }
 
-        router.push("/registered_user_welcome")
+        router.push("/registered_user_welcome");
 
     };
 
@@ -67,6 +71,15 @@ export default function SignIn () {
                 placeholder="Username"
                 value={username}
                 onChangeText={setUsername}
+                style={styles.input}
+                autoCapitalize="none"
+            />
+
+            <TextInput
+
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
                 style={styles.input}
                 autoCapitalize="none"
             />

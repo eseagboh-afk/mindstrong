@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions, views, response, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
@@ -14,11 +15,15 @@ class SignupView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
     
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        token, _ = Token.objects.create(user=User)
+        token, created = Token.objects.get_or_create(user=user)
         UserProfile.objects.create(user=user)
+        headers = self.get_success_headers(serializer.data)
         print(token.key)
+        return Response({"user": serializer.data, "token": token.key}, status=status.HTTP_201_CREATED, headers=headers)
         
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -45,14 +50,16 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         profile,created=UserProfile.objects.get_or_create(user=self.request.user)
         return profile
 
-class SleepEntryView(generics.ListCreateAPIView):
-    serializer_class = SleepEntrySerializer
+class SleepEntryView(APIView):
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
-    def get_queryset(self):
-        return SleepEntry.objects.filter(user=self.request.user).order_by('-created_at')[:21]
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def post(self, request):
+        serializer = SleepEntrySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class ExerciseEntryView(generics.ListCreateAPIView):
     serializer_class = ExerciseEntrySerializer

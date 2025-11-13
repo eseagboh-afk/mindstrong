@@ -1,9 +1,11 @@
 /* Import necessary libraries */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Alert, TouchableOpacity, ScrollView, Platform} from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
+import API_URL from "@/src/config";
+import * as SecureStore from "expo-secure-store";
 
 /* This mood entry page will link to the food entry page */
 
@@ -11,11 +13,20 @@ export default function Mood() {
     /* Mood entry */ 
 
     const router = useRouter();
-    const token = "ce8cc5b939dd44d9cad7089f448887e560d467a2";
 
     const [moodEntry, setMoodEntry] = useState<"Poor" | "Alright" |"Pretty Good" | "Excellent">("Excellent");
     const [workEntry, setWorkEntry] = useState<"Yes" | "No">("Yes");
     const [socialEntry, setSocialEntry] = useState<"Yes" | "No">("Yes");
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadToken = async () => {
+            const storedToken = await SecureStore.getItemAsync("authToken");
+            setToken(storedToken);
+            };
+            
+        loadToken();
+    }, []);
 
 
     const handleSaveAndContinue = async () => {
@@ -64,29 +75,29 @@ export default function Mood() {
         const moodValue = (convertMoodToInt(moodEntry) + convertWorkToInt(workEntry) + convertSocialToInt(socialEntry))
 
         const moodEntryData = {
-            moodValue,
+            mood: moodValue,
             timestamp: new Date().toISOString(),
         };
 
         try 
         {
-            const res = await fetch("http://127.0.0.1:8000/api/mood_entries/", {
+            const res = await fetch(`${API_URL}/api/mood_entries/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    "Authorization": `Token ${token}`,
                 },
                 body: JSON.stringify(moodEntryData),
             });
 
             if (!res.ok) {
                 const errData = await res.json();
-                console.error("Error saving food entry:", errData);
+                console.error("Error saving mood entry:", errData);
                 Alert.alert("Error", "Could not save your mood entry,");
                 return;
             }
 
-            Alert.alert("Success", "Your food entry has been saved");
+            Alert.alert("Success", "Your mood entry has been saved");
             router.push("/journal_entry");
 
     } catch(error){

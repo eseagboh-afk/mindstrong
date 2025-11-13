@@ -1,9 +1,11 @@
 /* Import necessary libraries */
 
+import * as SecureStore from "expo-secure-store";
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Link, useRouter, Stack } from "expo-router";
+import  API_URL  from "../src/config";
 
 
 /* This sleep entry page will link to the user profile page */
@@ -46,6 +48,7 @@ export default function SleepEntry() {
     const [bedAmPm, setBedAmPm] = useState<"AM" | "PM">("PM");
     const [wakeAmPm, setWakeAmPm] = useState<"AM" | "PM">("AM");
     const [totalSleepHours, setTotalSleepHours] = useState<number | null>(null);
+    
 
 
     /* Helper function to convert the user sleep entry input into 24 hour format */
@@ -86,45 +89,56 @@ export default function SleepEntry() {
         setTotalSleepHours(Math.round(sleepDuration));
     }, [bedTime, wakeTime]);
 
+
+    const apiFetch = async (url: string, options: RequestInit = {}) => {
+        const token = await SecureStore.getItemAsync("authtoken");
+        if (!token) {
+            Alert.alert("Session expired", "Please log in again.");
+            router.push("/sign_in");
+            throw new Error("No auth token");
+        }
+
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`,
+            ...options.headers, 
+        };
+
+        return fetch(url, {...options, headers });
+    };
+
     const handleSaveAndContinue = async () => {
-        if (!totalSleepHours) {
+        if (totalSleepHours === null) {
             Alert.alert("Please enter a bed time and a wake time.")
             return;
         }
 
-        const sleepEntryData = {
-            bedTime, 
-            wakeTime, 
-            totalSleepHours, 
+        const sleepEntryData = { 
+            total_sleep_hours: totalSleepHours, 
             timestamp: new Date().toISOString(),
-        }
+        };
 
         try {
-        const res = await fetch("http://127.0.0.1:8000/api/sleep_entries/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json", 
-            },
-            body: JSON.stringify(sleepEntryData),
-        });
+            const res = await apiFetch(`${API_URL}/api/sleep_entries/`, {
+                method: "POST",
+                body: JSON.stringify(sleepEntryData),
+            });
 
-        if (!res.ok) {
-            const errData = await res.json();
-            console.error("Error saving sleep entry:", errData);
-            Alert.alert("Error", "Could not save your sleep entry,");
-            return;
+            if (!res.ok) {
+                const errData = await res.json();
+                console.error("Error saving sleep entry:", errData);
+                Alert.alert("Error", "Could not save your sleep entry.");
+                return;
+            }
+
+            Alert.alert("Success", "Your sleep entry has been saved!");
+            router.push("/exercise_entry");
+        } catch(error) {
+            console.error("Network error:", error);
+            Alert.alert("Network Error", "Could not connect to server.");
         }
-
-        Alert.alert("Success", "Your sleep entry has been saved!");
-        router.push("/exercise_entry");
-    } catch(error) {
-        console.error("Network error:", error);
-        Alert.alert("Network error", "Could not connect to server.")
-    }
-
-
-
     };
+
 
     return (
 

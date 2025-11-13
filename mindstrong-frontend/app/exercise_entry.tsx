@@ -1,10 +1,11 @@
 /* Import necessary libraries */
 
-import * as SecureStore from "expo-secure-store"
+import * as SecureStore from "expo-secure-store";
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
+import API_URL from "@/src/config";
 
 /* This exercise entry page will link to the sleep entry page */
 
@@ -34,13 +35,13 @@ export default function ExerciseEntry() {
         }
 
         const exerciseEntryData = {
-        exerciseEntry,
+        exercised: exerciseEntry,
         timestamp: new Date().toISOString(),
 
     };
 
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/exercise_entries/", {
+        const res = await fetch(`${API_URL}/api/exercise_entries/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -53,7 +54,7 @@ export default function ExerciseEntry() {
         if (!res.ok) {
             const errData = await res.json();
             console.error("Error saving exercise entry:", errData);
-            Alert.alert("Error", "Could not save your food entry,");
+            Alert.alert("Error", "Could not save your exercise entry,");
             return;
         }
 

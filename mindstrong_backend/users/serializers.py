@@ -39,30 +39,25 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class SleepEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = SleepEntry
-        fields = ['id', 'user', 'total_sleep_hours', 'created_at']
-        read_only_field = ['user', 'created_at']
+        fields = ['total_sleep_hours']
         
 class ExerciseEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseEntry
-        fields = ['id', 'user', 'exercised', 'timestamp']
-        read_only_field = ['user', 'created_at']
+        fields = ['exercised', 'timestamp']
         
 class FoodEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodEntry
-        fields = ['id', 'user', 'food', 'timestamp']
-        read_only_field = ['user', 'created_at']
+        fields = ['food', 'timestamp']
 
 class MoodEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = MoodEntry
-        fields = ['id', 'user', 'mood', 'timestamp']
-        read_only_field = ['user', 'created_at']
+        fields = ['mood', 'timestamp']
         
 class JournalEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = JournalEntry
-        fields = ['id', 'user', 'journaled', 'timestamp' ]
-        read_only_field = ['user', 'created_at']
+        fields = [ 'journaled_status', 'timestamp' ]
         

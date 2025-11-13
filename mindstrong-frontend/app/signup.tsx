@@ -1,6 +1,7 @@
+import * as SecureStore from "expo-secure-store";
 import { Text, View, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,7 +23,9 @@ export default function SignUp()
     const [griefStatus, setGriefStatus] = useState<string[]>([]);
     const [relocationStatus, setRelocationStatus] = useState<string[]>([]);
     const [userConsent, setUserConsent] = useState("Yes");
+    const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
+
 
     const toggleEmployment = (option: string) => {
         setEmploymentStatus(prev =>
@@ -36,36 +39,38 @@ export default function SignUp()
 
         if (!userConsent || userConsent == "No"){
             Alert.alert("You'll need to agree to storage and analysis of your information")
+            return;
         }
+
+        const signupData = {
+            username, 
+            email, 
+            password,
+        };
+
+
         try {
             const response = await fetch ('http://127.0.0.1:8000/api/signup/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-
-                },
-
-                body: JSON.stringify({ pseudonym, email, password, dob, genderIdentity, genderAtBirth,
-                    employmentStatus, relationshipStatus, griefStatus, relocationStatus
-                 }),
-            });
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(signupData),
+                });
 
             const data = await response.json();
+            console.log("Response:", data);
 
             if (response.ok) {
+                await SecureStore.setItemAsync("authtoken", data.token);
                 Alert.alert("Success", "Account created!");
-                router.push('/');
-
             } else {
-                Alert.alert("Error", JSON.stringify(data));
+                Alert.alert("Signup failed", JSON.stringify(data));
+                }
+            } catch (err) {
+                Alert.alert("Network error");
             }
-        } catch (err) {
-            Alert.alert('Error', 'Something went wrong.');
-            console.log(err);
-        }
-
-        router.push('/post_sign_up')
-    };
+            router.push("/post_sign_up");
+              
+    }; 
 
 
 return(

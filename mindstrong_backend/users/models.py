@@ -5,6 +5,13 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 
+class EmploymentStatus(models.Model):
+    name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name
+        
+        
 class UserProfile(models.Model):
 
 #Each record matches to exactly one user#
@@ -19,7 +26,7 @@ class UserProfile(models.Model):
     dob = models.DateField(null=True, blank=True)
     genderIdentity = models.CharField(max_length=100, blank=True)
     genderAtBirth = models.CharField(max_length=100, blank=True)
-    employmentStatus = models.CharField(max_length=100, blank=True)
+    employment_statuses = models.ManyToManyField(EmploymentStatus, blank=True)
     relationshipStatus = models.CharField(max_length=100, blank=True)
     griefStatus = models.CharField(max_length=100, blank=True)
     relocationStatus = models.CharField(max_length=100, blank=True)
@@ -28,6 +35,7 @@ class UserProfile(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
     
     def __str__(self):
         return f"{self.user.pseudonym}'s profile"
@@ -63,5 +71,6 @@ class MoodEntry(models.Model):
 
 class JournalEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    journaled = models.BooleanField(default=False)
+    journaled_status = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
     

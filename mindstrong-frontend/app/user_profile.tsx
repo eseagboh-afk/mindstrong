@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { Text, View, StyleSheet, Alert, TextInput, Button, } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import API_URL from "@/src/config";
 
 
 
@@ -11,7 +12,7 @@ export default function UserProfile() {
     const [genderIdentity, setGenderIdentity] = useState("");
     const [relationshipStatus, setRelationshipStatus] = useState("");
     const [employmentStatus, setEmploymentStatus] = useState("");
-    const API_BASE = "http://127.0.0.1:8000/api/profile/";
+    const API_BASE = `${API_URL}/api/profile/`;
 
     const [loading, setLoading] = useState(true);
 
