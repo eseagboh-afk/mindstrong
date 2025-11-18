@@ -149,7 +149,7 @@ export default function Mood() {
                 
 
                 
-                    <Text style={styles.label}>Did you see or chat with a friend or significant other today?</Text>
+                    <Text style={styles.label}>Did you positively interact with a friend or significant other today?</Text>
                     <Picker 
                             selectedValue={socialEntry}
                             onValueChange={(value) => setSocialEntry(value)}

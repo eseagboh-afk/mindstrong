@@ -22,14 +22,14 @@ class UserProfile(models.Model):
     
 #Attributes of the user profile#
     
-    pseudonym = models.CharField(max_length=100, blank=True)
-    dob = models.DateField(null=True, blank=True)
-    genderIdentity = models.CharField(max_length=100, blank=True)
-    genderAtBirth = models.CharField(max_length=100, blank=True)
-    employment_statuses = models.ManyToManyField(EmploymentStatus, blank=True)
-    relationshipStatus = models.CharField(max_length=100, blank=True)
-    griefStatus = models.CharField(max_length=100, blank=True)
-    relocationStatus = models.CharField(max_length=100, blank=True)
+    pseudonym = models.CharField(max_length=100)
+    dob = models.DateField()
+    genderIdentity = models.CharField(max_length=100)
+    genderAtBirth = models.CharField(max_length=100)
+    #employment_statuses = models.ManyToManyField(EmploymentStatus)#
+    relationshipStatus = models.CharField(max_length=100)
+    griefStatus = models.CharField(max_length=100)
+    relocationStatus = models.CharField(max_length=100)
 
 #Track when the profile was created and updated#
 

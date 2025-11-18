@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { Text, View, StyleSheet, Alert, TextInput, Button, } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import API_URL from "@/src/config";
@@ -7,6 +7,8 @@ import API_URL from "@/src/config";
 
 
 export default function UserProfile() {
+
+    const router = useRouter();
 
     const [pseudonym, setPseudonym] = useState("");
     const [genderIdentity, setGenderIdentity] = useState("");
@@ -22,13 +24,14 @@ export default function UserProfile() {
                 const token = await SecureStore.getItemAsync("userToken");
                 if (!token) throw new Error("No token found");
                 
-            const res = await fetch(API_BASE, {
+            const res = await fetch(`${API_URL}/api/profile/`,{
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Token ${token}`,
 
             },
+            
         });
 
         if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -50,34 +53,75 @@ export default function UserProfile() {
         fetchProfile();
     }, []);
     
-    const handleSave = () => {
-        fetch(`${API_BASE}/api/token-auth/`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
+    const handleSave = async () => {
+        try {
+            const token = await SecureStore.getItemAsync("userToken");
+            if(!token) throw new Error("No token found");
 
-            },
+            const res = await fetch(`${API_URL}/api/profile/`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`,
+                },
 
-            body: JSON.stringify({
-                pseudonym,
-                gender_identity: genderIdentity,
-                relationship_status: relationshipStatus,
-                employment_status: employmentStatus, 
-            }),
-        })
+                body: JSON.stringify({
+                    pseudonym,
+                    gender_identity: genderIdentity, 
+                    relationship_status: relationshipStatus,
+                    employment_status: employmentStatus, 
+                }),
+            });
 
-        .then((res) => {
-            if (res.ok){
+            if (res.ok) {
                 Alert.alert("Success", "Profile updated successfully!");
             } else {
                 Alert.alert("Error", "Something went wrong updating your profile.");
             }
-        })
-
-        .catch((err) => {
+        } catch (err) {
             console.error("Error updating profile:", err);
             Alert.alert("Error", "Unable to update profile.");
-        });
+        }
+        
+    };
+
+    const handleDelete = async () => {
+        Alert.alert(
+            "Delete Profile?",
+            "This will permanently delete your account and all daily entries. This action cannot be undone.",
+            [
+                { text: "Cancel", style: "cancel"},
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const token = await SecureStore.getItemAsync("userToken");
+                            if (!token) throw new Error("No token found");
+
+                            const res = await fetch(`${API_URL}/api/profile/`, {
+                                method: "DELETE",
+                                headers: {
+                                    "Authorization": `Token ${token}`,
+                                },
+                            });
+
+                            if (res.ok) {
+                                await SecureStore.deleteItemAsync("userToken");
+                                Alert.alert("Deleted", "Your profile has been removed.");
+                                router.push("/");
+                            } else {
+                                Alert.alert("Error", "Unable to delete profile.");
+                            }
+                            
+                        } catch (err) {
+                            console.error("Error deleting profile:", err);
+                            Alert.alert("Error", "Unable to delete profile.");
+                        }
+                    },
+                },
+            ]
+        );
     };
 
     if (loading) {
@@ -118,6 +162,7 @@ export default function UserProfile() {
                 />
 
                 <Button title="Save Changes" onPress={handleSave} />
+                <Button title="Delete Profile" onPress={handleDelete}/>
             </View>
         </>
 

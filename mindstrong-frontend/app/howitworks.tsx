@@ -18,13 +18,18 @@ return (
                 <Text style={styles.paragraph}>
                     MindStrong allows you to track your daily habits in order to see how your lifestyle impacts your mood.
                     At MindStrong, our goal is to help you take control of your mental health in a simple and objective way.
+                    <strong> Important: MindStrong is not a substitute for professional mental health assistance.
+                        MindStrong is simply a tool. This application does not offer advice, guidance, counseling, suggestions, and recommendations about your mental health. 
+                    </strong>
                 </Text>
 
                 <Text style={styles.paragraph}>Here's how it works:</Text>
 
                 <Text style={styles.paragraph}>1. Log your sleep, exercise, food, and current mood for 21 consecutive days</Text>
                 <Text style={styles.paragraph}>2. After 21 days, you'll receive an analysis that shows you how your lifestyle correlates with your mood</Text>
-                <Text style={styles.paragraph}>3. Continue logging consistently and you'll receive analyses every 21 days</Text>
+                <Text style={styles.paragraph}>3. Continue logging consistently and you'll receive analyses every 21 days.</Text>
+                <Text style={styles.paragraph}> <strong> Note: Your data is only stored for 63 days, 3 analyses. After 63 days, everything is deleted.</strong>
+                Learn more about our committment to your privacy by reading our Terms and Conditions</Text>
 
                 <Text style={styles.paragraph}>
                     That's it! We encourage you to be honest and consistent.</Text>

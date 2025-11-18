@@ -22,16 +22,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'user',
             'pseudonym',
             'dob', 'genderIdentity', 'genderAtBirth',
-            'employmentStatus', 'relationshipStatus',
+            'relationshipStatus',
             'griefStatus', 'relocationStatus', 'created_at', 'updated_at'
         ]
         
-        read_only_field = ['created_at', 'updated_at', 'dob', 'genderAtBirth']
+        read_only_fields = ['created_at', 'updated_at', 'dob', 'genderAtBirth']
         
     def create(self, validated_data):
     
         user_data = validated_data.pop('user')
-        user = UserSerializer.create(UserSerializer(), validated_data=user_data)
+        user = UserSerializer().create(validated_data=user_data)
         profile = UserProfile.objects.create(user=user, **validated_data)
         
         return profile

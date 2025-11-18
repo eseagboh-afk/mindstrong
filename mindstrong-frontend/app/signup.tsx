@@ -46,6 +46,8 @@ export default function SignUp()
             username, 
             email, 
             password,
+            dob, genderIdentity, genderAtBirth, /*employmentStatus,*/
+            relationshipStatus, griefStatus, relocationStatus
         };
 
 
@@ -205,6 +207,7 @@ return(
 
             <Text style={styles.label}>Do you consent to storage and analysis of user information?</Text>
             <Text style={styles.paragraph}>We only store what is absolutely necessary to create your mental health analysis.
+                <strong> We do not share any data to 3rd parties. Ever.</strong>
             </Text>
 
             <Picker 
